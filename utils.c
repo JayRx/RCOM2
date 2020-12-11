@@ -13,5 +13,23 @@ void printParsedURL(ParsedURL* parsedURL) {
   printf("User: \t\t%s\n", parsedURL->user);
   printf("Password: \t%s\n", parsedURL->password);
   printf("Host: \t\t%s\n", parsedURL->host);
-  printf("Path: \t\t%s\n\n", parsedURL->path);
+  printf("IP: \t\t%s\n", parsedURL->ip);
+  printf("Path: \t\t%s\n", parsedURL->path);
+  printf("Filename: \t%s\n\n", parsedURL->filename);
+}
+
+void printProgressBar(unsigned long long int current, unsigned long long int total) {
+  float percentage = 100.0 * (float) current / (float) total;
+
+  printf("\r[");
+
+  int i, len = 30;
+  int pos = percentage * len / 100.0;
+
+  for (i = 0; i < len; i++)
+    i <= pos ? printf("■") : printf(" ");
+
+  printf("] %6.2f%%", percentage);
+
+  fflush(stdout);
 }
