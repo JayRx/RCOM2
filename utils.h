@@ -1,3 +1,6 @@
+#define PROGRESSBAR_SHOW 1
+#define PROGRESSBAR_HIDE 0
+
 void printUsage();
 
 void printParsedURL(ParsedURL* parseURL);

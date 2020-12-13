@@ -11,7 +11,7 @@ int ftp_get_file_size(int sockfd, ParsedURL* parseURL);
 
 int ftp_retrieve_file(int sockfd, ParsedURL* parsedURL);
 
-int ftp_download_file(int sockfd, ParsedURL* parsedURL);
+int ftp_download_file(int sockfd, ParsedURL* parsedURL, int progressbar_status);
 
 int ftp_close_connection(int sockfd);
 

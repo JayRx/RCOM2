@@ -34,8 +34,8 @@ int main(int argc, char **argv) {
 
   printParsedURL(&parsedURL);
 
-  int sockfd, newsockfd;
-  
+  int sockfd, newsockfd, progressbar_status = PROGRESSBAR_HIDE;
+
   if ((sockfd = open_socket(parsedURL.ip, FTP_PORT)) == -1) {
     printf("Error when opening socket!\n");
     exit(-1);
@@ -55,7 +55,9 @@ int main(int argc, char **argv) {
 
   if (ftp_get_file_size(sockfd, &parsedURL) != 0) {
     printf("Couldn't get file size!\n");
-    exit(-1);
+    progressbar_status = PROGRESSBAR_HIDE;
+  } else {
+    progressbar_status = PROGRESSBAR_SHOW;
   }
 
   if (ftp_retrieve_file(sockfd, &parsedURL) != 0) {
@@ -63,7 +65,7 @@ int main(int argc, char **argv) {
     exit(-1);
   }
 
-  if (ftp_download_file(newsockfd, &parsedURL) != 0) {
+  if (ftp_download_file(newsockfd, &parsedURL, progressbar_status) != 0) {
     printf("Couldn't download file!\n");
     exit(-1);
   }

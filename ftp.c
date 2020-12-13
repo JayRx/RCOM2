@@ -17,6 +17,7 @@
 
 #include "parser.h"
 #include "ftp.h"
+#include "utils.h"
 
 
 int read_welcome(int sockfd) {
@@ -120,7 +121,7 @@ int ftp_retrieve_file(int sockfd, ParsedURL* parsedURL) {
   return 0;
 }
 
-int ftp_download_file(int sockfd, ParsedURL* parsedURL) {
+int ftp_download_file(int sockfd, ParsedURL* parsedURL, int progressbar_status) {
   char buffer[TRANSFER_BUFFER_SIZE];
   char c;
   int filefd;
@@ -135,6 +136,7 @@ int ftp_download_file(int sockfd, ParsedURL* parsedURL) {
 
   do {
     res = read(sockfd, buffer, sizeof(buffer));
+    printf("res: %d\n", res);
 
     if (res < 0) {
       perror("read()");
@@ -148,7 +150,8 @@ int ftp_download_file(int sockfd, ParsedURL* parsedURL) {
 
     bytes_transfered += res;
 
-    printProgressBar(bytes_transfered, parsedURL->filesize);
+    if (progressbar_status == PROGRESSBAR_SHOW)
+      printProgressBar(bytes_transfered, parsedURL->filesize);
   } while (res != 0);
 
   close(filefd);

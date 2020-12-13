@@ -156,14 +156,28 @@ int getPath(char** arg, ParsedURL* parsedURL) {
   char* rest2;
   char* path;
   int rest_index;
+  int counter_aux = 0;
+
+  printf("%s\n", *arg);
 
   // Get the position where the path ends
   do {
     rest = strstr(arg_aux, "/");
-    if (rest != NULL)
+    if (rest != NULL) {
       rest2 = rest;
+      counter_aux++;
+    }
     arg_aux = rest + 1 * sizeof(char);
   } while(rest != NULL);
+
+  // There is no directory
+  if (counter_aux == 0) {
+    // Parse Path and store it in struct
+    path = (char*) malloc(1 * sizeof(char));
+    parsedURL->path = path;
+    parsedURL->path = "";
+    return 0;
+  }
 
   rest2 += 1 * sizeof(char); // Add "/"
 
@@ -191,11 +205,17 @@ int getFilename(char** arg, ParsedURL* parsedURL) {
 }
 
 void destructParsedURL(ParsedURL* parsedURL) {
-  free(parsedURL->protocol);
-  free(parsedURL->user);
-  free(parsedURL->password);
-  free(parsedURL->host);
-  free(parsedURL->path);
-  free(parsedURL->filename);
+  if (parsedURL->protocol != NULL && strcmp(parsedURL->protocol, "") != 0)
+    free(parsedURL->protocol);
+  if (parsedURL->user != NULL && strcmp(parsedURL->user, "") != 0)
+    free(parsedURL->user);
+  if (parsedURL->password != NULL && strcmp(parsedURL->password, "") != 0)
+    free(parsedURL->password);
+  if (parsedURL->host != NULL && strcmp(parsedURL->host, "") != 0)
+    free(parsedURL->host);
+  if (parsedURL->path != NULL && strcmp(parsedURL->path, ""))
+    free(parsedURL->path);
+  if (parsedURL->filename != NULL && strcmp(parsedURL->filename, ""))
+    free(parsedURL->filename);
   free(parsedURL->ip);
 }
