@@ -108,9 +108,24 @@ int ftp_get_file_size(int sockfd, ParsedURL* parsedURL) {
   return 0;
 }
 
-int ftp_retrieve_file(int sockfd, ParsedURL* parsedURL) {
+int ftp_set_transfer_mode(int sockfd, FTP_TRANSFER_MODES transfer_mode) {
   char command[MAX_SIZE];
   char answer[MAX_SIZE];
+
+  if (transfer_mode == ASCII)
+    sprintf(command, "type a");
+  else if (transfer_mode == BINARY)
+    sprintf(command, "type b");
+  else return -1;
+
+  if (ftp_send_command(sockfd, command) != 0)
+    return -1;
+
+  return 0;
+}
+
+int ftp_retrieve_file(int sockfd, ParsedURL* parsedURL) {
+  char command[MAX_SIZE];
   char fullFilePath[MAX_SIZE];
 
   sprintf(fullFilePath, "%s%s", parsedURL->path, parsedURL->filename);
@@ -123,7 +138,6 @@ int ftp_retrieve_file(int sockfd, ParsedURL* parsedURL) {
 
 int ftp_download_file(int sockfd, ParsedURL* parsedURL, int progressbar_status) {
   char buffer[TRANSFER_BUFFER_SIZE];
-  char c;
   int filefd;
   int res;
 
@@ -136,7 +150,6 @@ int ftp_download_file(int sockfd, ParsedURL* parsedURL, int progressbar_status) 
 
   do {
     res = read(sockfd, buffer, sizeof(buffer));
-    printf("res: %d\n", res);
 
     if (res < 0) {
       perror("read()");
@@ -164,6 +177,9 @@ int ftp_download_file(int sockfd, ParsedURL* parsedURL, int progressbar_status) 
 int ftp_close_connection(int sockfd) {
   char command[MAX_SIZE];
   char answer[MAX_SIZE];
+
+  read_socket(sockfd, answer);
+  printf("\n");
 
   sprintf(command, "quit\r\n");
   if (ftp_send_command(sockfd, command) != 0)
@@ -193,8 +209,6 @@ int ftp_send_command(int sockfd, char* command) {
 int open_socket(char* ip, int port) {
   int sockfd;
   struct sockaddr_in server_addr;
-  char buf[] = "Mensagem de teste na travessia da pilha TCP/IP\n";
-  int bytes;
 
   // Server address handling
   bzero((char*) &server_addr, sizeof(server_addr));
@@ -222,6 +236,8 @@ int read_socket(int sockfd, char* answer) {
   do {
     memset(answer, 0, MAX_SIZE);
     res = read(sockfd, answer, MAX_SIZE);
+    if (res < 0)
+      return -1;
     printf("%s", answer);
   } while(!('1' <= answer[0] && answer[0] <= '5') || answer[3] != ' ');
 
