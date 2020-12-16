@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "parser.h"
 #include "utils.h"
@@ -11,7 +12,8 @@ void printUsage() {
 void printParsedURL(ParsedURL* parsedURL) {
   printf("\nProtocol: \t%s\n", parsedURL->protocol);
   printf("User: \t\t%s\n", parsedURL->user);
-  printf("Password: \t%s\n", parsedURL->password);
+  printf("Password: \t");
+  printPassword(parsedURL->password);
   printf("Host: \t\t%s\n", parsedURL->host);
   printf("IP: \t\t%s\n", parsedURL->ip);
   printf("Path: \t\t%s\n", parsedURL->path);
@@ -32,4 +34,12 @@ void printProgressBar(unsigned long long int current, unsigned long long int tot
   printf("] %6.2f%%", percentage);
 
   fflush(stdout);
+}
+
+void printPassword(char *password) {
+  if (password == NULL) return;
+  for (int i = 0; i < (int) strlen(password); i++) {
+    printf("*");
+  }
+  printf("\n");
 }

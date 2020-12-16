@@ -25,6 +25,10 @@ int parseURL(char* arg, ParsedURL* parsedURL) {
     parsedURL->password = password;
   }
 
+  if (parsedURL->password == NULL) {
+    parsedURL->password = getpass("Please enter the password: ");
+  }
+
   return 0;
 }
 
@@ -157,8 +161,6 @@ int getPath(char** arg, ParsedURL* parsedURL) {
   char* path;
   int rest_index;
   int counter_aux = 0;
-
-  printf("%s\n", *arg);
 
   // Get the position where the path ends
   do {

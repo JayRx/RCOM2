@@ -23,7 +23,7 @@ ftp.o: ftp.h ftp.c
 	$(CC) -c ftp.c $(CFLAGS)
 
 clean:
-	rm download parser.o utils.o download.o
+	rm download ftp.o getip.o parser.o utils.o download.o
 
 #make instructions
 defaultUrl=ftp://anonymous:password@ftp.fe.up.pt/welcome.msg

@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
   printParsedURL(&parsedURL);
 
   int sockfd, newsockfd, progressbar_status = PROGRESSBAR_HIDE;
+  //FTP_TRANSFER_MODES transfer_mode = BINARY;
 
   if ((sockfd = open_socket(parsedURL.ip, FTP_PORT)) == -1) {
     printf("Error when opening socket!\n");
@@ -47,6 +48,11 @@ int main(int argc, char **argv) {
     printf("Couldn't login user!\n");
     exit(-1);
   }
+
+  /*if (ftp_set_transfer_mode(sockfd, transfer_mode) != 0) {
+    printf("Couldn't set transfer mode!\n");
+    exit(-1);
+  }*/
 
   if (ftp_enter_passive_mode(sockfd, &newsockfd) != 0) {
     printf("Couldn't enter passive mode!\n");

@@ -88,7 +88,7 @@ int ftp_enter_passive_mode(int sockfd, int* newsockfd) {
 }
 
 int ftp_get_file_size(int sockfd, ParsedURL* parsedURL) {
-  char command[MAX_SIZE];
+  char command[2*MAX_SIZE];
   char answer[MAX_SIZE];
   char fullFilePath[MAX_SIZE];
   unsigned long long int filesize;
@@ -115,17 +115,20 @@ int ftp_set_transfer_mode(int sockfd, FTP_TRANSFER_MODES transfer_mode) {
   if (transfer_mode == ASCII)
     sprintf(command, "type a");
   else if (transfer_mode == BINARY)
-    sprintf(command, "type b");
+    sprintf(command, "type i");
   else return -1;
 
   if (ftp_send_command(sockfd, command) != 0)
     return -1;
 
+  read_socket(sockfd, answer);
+  printf("\n");
+
   return 0;
 }
 
 int ftp_retrieve_file(int sockfd, ParsedURL* parsedURL) {
-  char command[MAX_SIZE];
+  char command[2*MAX_SIZE];
   char fullFilePath[MAX_SIZE];
 
   sprintf(fullFilePath, "%s%s", parsedURL->path, parsedURL->filename);
