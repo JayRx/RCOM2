@@ -1,27 +1,22 @@
 #!/bin/bash
 
-echo -n "Restarting Network service..."
-service networking restart
-echo "Done!"
+# configuração de IP's
+ifconfig eth0 up
+ifconfig eth0 172.16.40.254/24
+ifconfig eth0
 
-ifconfig eth0 up 172.16.30.254/24
-ifconfig eth0 up 172.16.31.253/24
-echo "IP Adresses set!"
+ifconfig eth1 up
+ifconfig eth1 172.16.41.253/24
+ifconfig eth1
 
-route add default gw 172.16.31.254
-echo "Default gateway route set!"
-
+# Enable IP forwarding
 echo 1 > /proc/sys/net/ipv4/ip_forward
+# Disable ICMP echo-ignore-broadcast
 echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 
-printf "search netlab1.fe.up.pt\nnameserver 172.16.1.1\nnameserver 172.16.2.1\n" > /etc/resolv.conf
-echo "DNS set!"
-
-echo "Performing ping test..."
-ping -q -c 1 google.pt > /dev/null
-
-if [ "$?" -ne "$zero" ]; then
-	echo -e "\033[0;31mERROR\033[0m: Could NOT ping a foreign host. Please review! Error "
-else
-	echo -e "\033[0;32mSUCCESS\033[0m: Could ping a foreign host, by hostname. Network and DNS are OK."
-fi
+# route para aceder a internet a partir de eth0 de router
+route add -net 172.16.1.0/24 gw 172.16.41.254
+# definir RC como default router
+route add default gw 172.16.41.254
+# ver routes
+routes -n
